@@ -1,0 +1,40 @@
+problem link::https://atcoder.jp/contests/dp/tasks/dp_l
+
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long int
+const int mx = 3005;
+ll dp[mx][mx][3];
+int n;
+int arr[mx];
+
+ll solve(int left, int right, int pick) {
+    if (left > right)return 0;
+    if (dp[left][right][pick] != -1e18)return dp[left][right][pick];
+    if (pick == 1) {
+        ll val1 = -1e18;
+        val1 = max(val1, arr[left] + solve(left + 1, right, 2));
+        val1 = max(val1, arr[right] + solve(left, right - 1, 2));
+        return dp[left][right][pick] = val1;
+    } else if (pick == 2) {
+        ll val2 = 1e18;
+        val2 = min(val2, -arr[left] + solve(left + 1, right, 1));
+        val2 = min(val2, -arr[right] + solve(left, right - 1, 1));
+        return dp[left][right][pick] = val2;
+    }
+}
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            dp[i][j][1] = dp[i][j][2] = -1e18;
+        }
+    }
+    cout << solve(0, n - 1, 1);
+    return 0;
+}
