@@ -1,0 +1,58 @@
+problem link::https://lightoj.com/problem/palindrome-partitioning
+
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ll long long int
+const int mx = 1005;
+int dp1[mx][mx];
+int dp2[mx][mx];
+string s;
+int n;
+
+int solve1(int i, int j) {
+    if (i >= j)return dp1[i][j] = 1;
+    if (dp1[i][j] != -1)return dp1[i][j];
+    if (s[i] == s[j]) {
+        dp1[i][j] = solve1(i + 1, j - 1);
+    } else {
+        return dp1[i][j] = 0;
+    }
+    return dp1[i][j];
+}
+
+int solve2(int i, int left) {
+    if (i == n) {
+        if (left == n)return 0;
+        else return 1e9;
+    }
+    if (dp2[i][left] != -1)return dp2[i][left];
+    int ret = 1e9;
+    if (dp1[left][i] == 1) {
+        ret = min(ret, 1 + solve2(i + 1, i + 1));
+    }
+    ret = min(ret, solve2(i + 1, left));
+    return dp2[i][left] = ret;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    int tt;
+    cin >> tt;
+    int k = 1;
+    while (tt--) {
+        cin >> s;
+        n = s.size();
+        memset(dp1, -1, sizeof dp1);
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                solve1(i, j);
+            }
+        }
+        memset(dp2, -1, sizeof dp2);
+        int res = solve2(0, 0);
+        cout << "Case " << k++ << ": " << res << '\n';
+    }
+    return 0;
+}
